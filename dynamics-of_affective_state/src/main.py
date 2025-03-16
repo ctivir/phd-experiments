@@ -7,8 +7,15 @@ from dotenv import load_dotenv
 DATA_DIR = "../data"
 OUT_DIR = "../data/output"
 
-load_dotenv(dotenv_path="../../.env")
+dotenv_path = os.path.abspath("../../.env")
+load_dotenv(dotenv_path=dotenv_path)
+
+# Retrieve the API key
 API_KEY = os.getenv("GROQ_API")
+
+# Check if the API key is loaded
+if not API_KEY:
+    raise ValueError("API key is missing. Check your .env file and path.")
 
 CLIENT = Groq(api_key=API_KEY)
 
@@ -25,11 +32,11 @@ STATES = [
     "neutral",
 ]
 
-##########################################################################################################
+####################################################################################################
 ##
 # Experiment 1
 ##
-##########################################################################################################
+####################################################################################################
 
 PROMPT_11 = """
 A student is using an intelligent tutoring system on math problem solving.
@@ -61,18 +68,18 @@ Choose only one from the following options: {states}
 experiment1_1 = ExperimentRunner(
     DATA, MODEL, CLIENT, PROMPT_11, STATES, "experiment_1_model1", model_1=True
 )
-experiment1_1.run_experiment()
+# experiment1_1.run_experiment()
 
 experiment1_2 = ExperimentRunner(
     DATA[:1], MODEL, CLIENT, PROMPT_12, STATES, "experiment_1_model2", model_1=False
 )
 # experiment1_2.run_experiment()
 
-##########################################################################################################
+##############################################################################################
 ##
 # Experiment 2
 ##
-##########################################################################################################
+##############################################################################################
 
 PROMPT_21 = """
 A student is using an intelligent tutoring system on math problem solving.
@@ -112,11 +119,11 @@ experiment2_2 = ExperimentRunner(
 )
 # experiment2_1.run_experiment()
 
-##########################################################################################################
+####################################################################################################
 ##
 # Experiment 3
 ##
-##########################################################################################################
+####################################################################################################
 
 PROMPT_31 = """
 Here's a student who is interacting with an intelligent tutoring system on a {math_level} problem-solving task
@@ -156,9 +163,9 @@ Choose one from the following options: {states}
 
 # Run experiment 3
 experiment3_1 = ExperimentRunner(
-    DATA3[:3], MODEL, CLIENT, PROMPT_31, STATES, "experiment_3_model1_", model_1=True
+    DATA3, MODEL, CLIENT, PROMPT_31, STATES, "experiment_3_model1_", model_1=True
 )
-# experiment3_1.run_experiment()
+experiment3_1.run_experiment()
 
 experiment3_2 = ExperimentRunner(
     DATA3[:1], MODEL, CLIENT, PROMPT_32, STATES, "experiment_3_model2", model_1=False

@@ -1,7 +1,7 @@
+import re
 import random
 import pandas as pd
 import groq
-import re
 
 
 class ExperimentRunner:
@@ -198,6 +198,6 @@ class ExperimentRunner:
                 time_step += 1
         # Convert to DataFrame and save to CSV
         df_result = pd.DataFrame(result)
-        df_result.to_csv("../data/output/{self.experiment_name}.csv", index=False)
+        df_result.to_csv(f"../data/output/{self.experiment_name}.csv", index=False)
 
         print(f"Experiment {self.experiment_name} completed and saved!")
