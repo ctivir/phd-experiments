@@ -68,7 +68,7 @@ Choose only one from the following options: {states}
 experiment1_1 = ExperimentRunner(
     DATA, MODEL, CLIENT, PROMPT_11, STATES, "experiment_1_model1", model_1=True
 )
-# experiment1_1.run_experiment()
+# experiment1_1.run_experiment() # done
 
 experiment1_2 = ExperimentRunner(
     DATA[:1], MODEL, CLIENT, PROMPT_12, STATES, "experiment_1_model2", model_1=False
@@ -110,9 +110,9 @@ Choose one from the following options: {states}
 """
 
 experiment2_1 = ExperimentRunner(
-    DATA[:2], MODEL, CLIENT, PROMPT_21, STATES, "experiment_2_model1", model_1=True
+    DATA, MODEL, CLIENT, PROMPT_21, STATES, "experiment_2_model1", model_1=True
 )
-# experiment2_1.run_experiment()
+experiment2_1.run_experiment()
 
 experiment2_2 = ExperimentRunner(
     DATA[:1], MODEL, CLIENT, PROMPT_22, STATES, "experiment_2_model2", model_1=False
@@ -163,9 +163,9 @@ Choose one from the following options: {states}
 
 # Run experiment 3
 experiment3_1 = ExperimentRunner(
-    DATA3, MODEL, CLIENT, PROMPT_31, STATES, "experiment_3_model1_", model_1=True
+    DATA3, MODEL, CLIENT, PROMPT_31, STATES, "experiment_3_model1", model_1=True
 )
-experiment3_1.run_experiment()
+# experiment3_1.run_experiment() # done
 
 experiment3_2 = ExperimentRunner(
     DATA3[:1], MODEL, CLIENT, PROMPT_32, STATES, "experiment_3_model2", model_1=False
