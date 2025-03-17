@@ -112,7 +112,7 @@ Choose one from the following options: {states}
 experiment2_1 = ExperimentRunner(
     DATA, MODEL, CLIENT, PROMPT_21, STATES, "experiment_2_model1", model_1=True
 )
-experiment2_1.run_experiment()
+# experiment2_1.run_experiment() # done
 
 experiment2_2 = ExperimentRunner(
     DATA[:1], MODEL, CLIENT, PROMPT_22, STATES, "experiment_2_model2", model_1=False
