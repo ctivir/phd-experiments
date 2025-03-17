@@ -11,7 +11,7 @@ dotenv_path = os.path.abspath("../../.env")
 load_dotenv(dotenv_path=dotenv_path)
 
 # Retrieve the API key
-API_KEY = os.getenv("GROQ_API")
+API_KEY = os.getenv("GROQ_API1")
 
 # Check if the API key is loaded
 if not API_KEY:
@@ -168,6 +168,6 @@ experiment3_1 = ExperimentRunner(
 # experiment3_1.run_experiment() # done
 
 experiment3_2 = ExperimentRunner(
-    DATA3[:1], MODEL, CLIENT, PROMPT_32, STATES, "experiment_3_model2", model_1=False
+    DATA3, MODEL, CLIENT, PROMPT_32, STATES, "experiment_3_model2", model_1=False
 )
-# experiment3_2.run_experiment()
+experiment3_2.run_experiment()

@@ -1,35 +1,34 @@
-import pandas as pd
-import numpy as np
 import os
+import json
+import random
 
-def generate_data(df, data_dir, file_name):
-    """
-    Augments a DataFrame with skill level and math anxiety level columns, and saves it as a JSON file.
+
+def generate_data(input_file: str, output_file: str):
+    """Augments a dataset with skill level and math anxiety level entry, and saves it as a JSON file.
 
     Args:
-        df: The input DataFrame.
-        data_dir: The directory to save the JSON file.
-        file_name: The name of the JSON file.
-
-    Returns:
-        None
-
+        input_file (str): input data file path
+        output_file (str): output data file
     """
+    # If output file doesn't exist, generate new json file
+    if not os.path.exists(output_file):
+        with open(input_file, "r") as file:
+            data = json.load(file)
 
-    # Create new columns
-    df["skill_level"] = np.random.randint(1, 6, size=len(df))
-    df["math_anxiety_level"] = np.random.randint(1, 6, size=len(df))
+            # Add the new keys with random values between 1 and 5
+            for entry in data:
+                entry["skill_level"] = random.randint(1, 5)
+                entry["math_anxiety_level"] = random.randint(1, 5)
 
-    file_path = os.path.join(data_dir, file_name)
-    if not os.path.exists(file_path):
-        # Record the csv data
-        df.to_json(file_path, index=False)
-        print(f"File created successfully: {file_path}")
+        # Save the updated JSON data back to the file
+        with open(output_file, "w") as file:
+            json.dump(data, file, indent=4)
 
+        print(f"File created successfully: {output_file}")
     else:
-        print(f"File already exists: {file_path}")
+        print(f"File already exists: {output_file}")
 
 
-DATA_DIR = "data"
-DATA = pd.read_json(f"{DATA_DIR}/CoMTA_dataset.json")
-generate_data(DATA, DATA_DIR, "CoMTA_dataset3.json")
+INPUT_DATA = "../data/CoMTA_dataset.json"
+OUTPUT_DATA = "../data/CoMTA_dataset3.json"
+generate_data(INPUT_DATA, OUTPUT_DATA)
