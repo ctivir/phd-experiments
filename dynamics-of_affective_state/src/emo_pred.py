@@ -114,7 +114,7 @@ class ExperimentRunner:
                 ),
             )
 
-    def run_experiment(self):
+    def run_experiment(self, times=1):
         """
         Executes the experiment by iterating through the dataset and making predictions.
 
@@ -122,80 +122,81 @@ class ExperimentRunner:
         """
         result = []
         transcript_pairs = []
-        for c, row in self.df.iterrows():
-            conversation = row["data"]
-            math_level = row.get("math_level", None)
-            skill_level = row.get("skill_level", None)
-            math_anxiety_level = row.get("math_anxiety_level", None)
-            previous_state = ""
-            time_step = 1
-            for i in range(0, len(conversation), 2):
-                student_response = (
-                    conversation[i]["content"]
-                    if conversation[i]["role"] == "user"
-                    else None
-                )
-
-                tutor_response = (
-                    conversation[i + 1]["content"]
-                    if i + 1 < len(conversation)
-                    and conversation[i + 1]["role"] == "assistant"
-                    else None
-                )
-                if student_response and tutor_response:
-                    current_state = (
-                        random.choice(self.states)
-                        if not previous_state
-                        else previous_state
+        for s in range(times): # How many times will it run
+            for c, row in self.df.iterrows():
+                conversation = row["data"]
+                math_level = row.get("math_level", None)
+                skill_level = row.get("skill_level", None)
+                math_anxiety_level = row.get("math_anxiety_level", None)
+                previous_state = ""
+                time_step = 1
+                for i in range(0, len(conversation), 2):
+                    student_response = (
+                        conversation[i]["content"]
+                        if conversation[i]["role"] == "user"
+                        else None
                     )
 
-                    # Generate prompt
-                    prompt = self._generate_prompt(
-                        math_level,
-                        skill_level,
-                        math_anxiety_level,
-                        student_response,
-                        tutor_response,
-                        transcript_pairs,
-                        current_state,
+                    tutor_response = (
+                        conversation[i + 1]["content"]
+                        if i + 1 < len(conversation)
+                        and conversation[i + 1]["role"] == "assistant"
+                        else None
                     )
+                    if student_response and tutor_response:
+                        current_state = (
+                            random.choice(self.states)
+                            if not previous_state
+                            else previous_state
+                        )
 
-                    # Make prediction
-                    llm_response = self._call_groq_api(prompt)
-                    predicted_emotion_match = re.findall(r"\[(.*?)\]", llm_response)
-                    predicted_emotion = (
-                        predicted_emotion_match[0] if predicted_emotion_match else None
-                    )
+                        # Generate prompt
+                        prompt = self._generate_prompt(
+                            math_level,
+                            skill_level,
+                            math_anxiety_level,
+                            student_response,
+                            tutor_response,
+                            transcript_pairs,
+                            current_state,
+                        )
 
-                    # Store results
-                    result.append(
-                        {
-                            "student_id": c + 1,
-                            "time_step": time_step,
-                            "student_response": student_response,
-                            "tutor_response": tutor_response,
-                            "previous_state": previous_state,
-                            "current_state": current_state,
-                            "next_state": predicted_emotion,
-                            "math_level": math_level,
-                            "skill_level": skill_level,
-                            "math_anxiety_level": math_anxiety_level,
-                            "prompt": prompt,
-                            "llm_response": llm_response,
-                        }
-                    )
+                        # Make prediction
+                        llm_response = self._call_groq_api(prompt)
+                        predicted_emotion_match = re.findall(r"\[(.*?)\]", llm_response)
+                        predicted_emotion = (
+                            predicted_emotion_match[0] if predicted_emotion_match else None
+                        )
 
-                    # Update state
-                    previous_state = predicted_emotion
+                        # Store results
+                        result.append(
+                            {
+                                "student_id": c + 1,
+                                "time_step": time_step,
+                                "student_response": student_response,
+                                "tutor_response": tutor_response,
+                                "previous_state": previous_state,
+                                "current_state": current_state,
+                                "next_state": predicted_emotion,
+                                "math_level": math_level,
+                                "skill_level": skill_level,
+                                "math_anxiety_level": math_anxiety_level,
+                                "prompt": prompt,
+                                "llm_response": llm_response,
+                            }
+                        )
 
-                    # Debugging output
-                    print(f"Prompt:\n{prompt}\n")
-                    print(
-                        f"\n-----------Student {c + 1} | timestep {time_step}-----------"
-                    )
-                    print(f"LLM Response: {llm_response}\n")
-                    print(f"Predicted Emotion: {predicted_emotion}\n")
-                time_step += 1
+                        # Update state
+                        previous_state = predicted_emotion
+
+                        # Debugging output
+                        print(f"Prompt:\n{prompt}\n")
+                        print(
+                            f"\n-----------Student {c + 1} | timestep {time_step}-----------"
+                        )
+                        print(f"LLM Response: {llm_response}\n")
+                        print(f"Predicted Emotion: {predicted_emotion}\n")
+                    time_step += 1
         # Convert to DataFrame and save to CSV
         df_result = pd.DataFrame(result)
         df_result.to_csv(f"../data/output/{self.experiment_name}.csv", index=False)

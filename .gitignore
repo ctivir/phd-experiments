@@ -172,3 +172,4 @@ cython_debug/
 
 # Dataset dir 
 dynamics-of_affective_state/data
+ed-expert-simulator/data
