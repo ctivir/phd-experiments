@@ -51,7 +51,7 @@ class ExperimentRunner:
             print(e.__cause__)
         except groq.RateLimitError:
             print(
-                f"A 429 status code was received; we should back off a bit.\n{e.response}"
+                f"A 429 status code was received, we should back off a bit.\n{e.response}"
             )
         except groq.APIStatusError as e:
             print("Another non-200-range status code was received")
@@ -122,7 +122,7 @@ class ExperimentRunner:
         """
         result = []
         transcript_pairs = []
-        for s in range(times): # How many times will it run
+        for t in range(times): # How many times will it run
             for c, row in self.df.iterrows():
                 conversation = row["data"]
                 math_level = row.get("math_level", None)
@@ -171,6 +171,7 @@ class ExperimentRunner:
                         # Store results
                         result.append(
                             {
+                                "t": t, # t times running the prompt
                                 "student_id": c + 1,
                                 "time_step": time_step,
                                 "student_response": student_response,
@@ -190,7 +191,7 @@ class ExperimentRunner:
                         previous_state = predicted_emotion
 
                         # Debugging output
-                        print(f"Prompt:\n{prompt}\n")
+                        print(f"{t}\nPrompt:\n{prompt}\n")
                         print(
                             f"\n-----------Student {c + 1} | timestep {time_step}-----------"
                         )

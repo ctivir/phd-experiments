@@ -110,7 +110,7 @@ Choose one from the following options: {states}
 """
 
 experiment2_1 = ExperimentRunner(
-    DATA3, MODEL, CLIENT, PROMPT_21, STATES, "experiment_2_model1_5x", model_1=True
+    DATA3[:1], MODEL, CLIENT, PROMPT_21, STATES, "experiment_2_model1_5x", model_1=True
 )
 experiment2_1.run_experiment(5) # not
 

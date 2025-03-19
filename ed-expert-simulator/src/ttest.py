@@ -1,70 +1,78 @@
 import pandas as pd
-import numpy as np
 from scipy import stats
 
-alpha = 0.05
-
-def tttest(personas):
+def t_test_expertise_reversal(df, alpha=0.05):
+    """
+    Perform t-tests and Pearson correlations for expertise reversal effect.
     
-    # expert reversal effect 
-    practice_high_expert = personas[personas['expertise_reversal'].isin(['high-expertise/practice'])]
-    worked_example_high_expert = personas[personas['expertise_reversal'].isin(['high-expertise/worked example'])]
-    practice_low_expert = personas[personas['expertise_reversal'].isin(['low-expertise/practice'])]
-    worked_example_low_expert= personas[personas['expertise_reversal'].isin(['low-expertise/worked example'])]
-
-    # Delta = posttrst - pretest 
-    delta_we_low = worked_example_low_expert['ere_post_test'] - worked_example_low_expert['pretest_score']
-    delta_practice_low = practice_low_expert['ere_post_test'] - practice_low_expert['pretest_score']
-    delta_we_high = worked_example_high_expert['ere_post_test'] - worked_example_high_expert['pretest_score']
-    delta_practice_high = practice_high_expert['ere_post_test'] - practice_high_expert['pretest_score']
-
+    Args:
+        df (pd.DataFrame): DataFrame containing 'expertise_reversal', 'ere_post_test', and 'pretest_score'.
+        alpha (float): Significance level for hypothesis testing. Default is 0.05.
     
-    # Perform the two-sample t-test
-    # 1. Low-expertise Learners: Worked example VS practice
-    t_stat, p_value = stats.ttest_ind(delta_we_low, delta_practice_low, equal_var=False)
-    print(f"\nDelta mean low worked-example: {delta_we_low.mean()}")
-    print(f"Delta mean low practice: {delta_practice_low.mean()}")
+    Returns:
+        pd.DataFrame: Summary of t-test results and Pearson correlations.
+    """
     
-    # Output results
-    print("\n<<<<< 1. Low-expertise Learners: worked-example VS practice >>>>>")
-    print(f"T-statistic = {round(t_stat,2)}")
-    print(f"P-value = {p_value}")
+    # Grouping data based on expertise level and learning method
+    groups = {
+        "high_expert_practice": df[df['expertise_reversal'] == 'high-expertise/practice'],
+        "high_expert_example": df[df['expertise_reversal'] == 'high-expertise/worked example'],
+        "low_expert_practice": df[df['expertise_reversal'] == 'low-expertise/practice'],
+        "low_expert_example": df[df['expertise_reversal'] == 'low-expertise/worked example']
+    }
+    
+    # Compute delta (post-test score - pre-test score)
+    deltas = {key: group['ere_post_test'] - group['pretest_score'] for key, group in groups.items()}
+    
+    # Initialize result storage
+    results = []
+    
+    # Function to perform T-test and store results
+    def perform_t_test(group1, group2, label):
+        t_stat, p_value = stats.ttest_ind(deltas[group1], deltas[group2], equal_var=False, nan_policy='omit')
+        reject_null = p_value < alpha
+        results.append({
+            "Comparison": label,
+            "T-statistic": round(t_stat, 2),
+            "P-value": round(p_value, 4),
+            "Significant?": "Yes" if reject_null else "No",
+            "Mean (Group 1)": round(deltas[group1].mean(), 2),
+            "Mean (Group 2)": round(deltas[group2].mean(), 2)
+        })
 
-    # Interpret results
-    if p_value < alpha:
-        print("Reject the null hypothesis: The means are significantly different.")
-    else:
-        print("Fail to reject the null hypothesis: The means are not significantly different.")
+    # Perform T-tests
+    perform_t_test("low_expert_example", "low_expert_practice", "Low-expertise: Worked-example vs Practice")
+    perform_t_test("high_expert_example", "high_expert_practice", "High-expertise: Worked-example vs Practice")
 
-    # 2. Low-expertise Learners: Worked example VS practice
-    t_stat, p_value = stats.ttest_ind(delta_we_high, delta_practice_high, equal_var=False)
-    print(f"\nDelta mean high worked-example: {delta_we_high.mean()}")
-    print(f"Delta mean high practice: {delta_practice_high.mean()}")
+    # Pearson Correlation Analysis
+    pearson_results = []
+    for label, group in groups.items():
+        if len(group) > 1:  # Pearson requires at least 2 data points
+            corr, p = stats.pearsonr(group['pretest_score'], group['ere_post_test'])
+            pearson_results.append({
+                "Group": label.replace("_", " ").title(),
+                "Pearson Coefficient": round(corr, 3),
+                "P-value": round(p, 4),
+                "Significant?": "Yes" if p < alpha else "No"
+            })
 
-    # Output results
-    print("\n<<<<< 2. High-expertise Learners: worked example VS practice >>>>>")
-    print(f"T-statistic = {round(t_stat,2)}")
-    print(f"P-value = {round(p_value,2)}")
+    # Convert results to DataFrames
+    t_test_df = pd.DataFrame(results)
+    pearson_df = pd.DataFrame(pearson_results)
 
-    # Interpret results
-    if p_value < alpha:
-        print("Reject the null hypothesis: The means are significantly different.")
-    else:
-        print("Fail to reject the null hypothesis: The means are not significantly different.")
+    # Display summary
+    print("\n<<<<< T-Test Results >>>>>")
+    print(t_test_df.to_string(index=False))
 
-    # Compute Pearson's correlation coefficient
-    print("\nPearson's correlation")
-    print("\n<<<<< Overall: Pre-Test VS Post-Test >>>>>")
-    print(stats.pearsonr(personas['pretest_score'], personas['ere_post_test']))
+    print("\n<<<<< Pearson Correlation Results >>>>>")
+    print(pearson_df.to_string(index=False))
 
-    print("\n<<<<< Low expert learners - Practice: Pre-Test VS Post-Test >>>>>")
-    print(stats.pearsonr(practice_low_expert['pretest_score'], practice_low_expert['ere_post_test']))
+    return t_test_df, pearson_df  # Returning DataFrames for further use
 
-    print("\n<<<<< Low expert learners - Worked-Example: Pre-Test VS Post-Test >>>>>")
-    print(stats.pearsonr(worked_example_low_expert['pretest_score'], worked_example_low_expert['ere_post_test']))
+# llm experiments results
+gemma_result = pd.read_csv("/Users/ctivir/projects/ml/ed_simulator/unchk/gemma2_9b_it_output.csv", delimiter=',')
+llama_result = pd.read_csv("/Users/ctivir/projects/ml/ed_simulator/unchk/llama3_8b_8192_40_output.csv", delimiter=',')
 
-    print("\n<<<<< High expert learners - Worked-Example: Pre-Test VS HE Post-Test >>>>>")
-    print(stats.pearsonr(worked_example_high_expert['pretest_score'], worked_example_high_expert['ere_post_test']))
-
-    print("\n<<<<< High expert learners - Practice: Pre-Test VS HE Post-Test >>>>>")
-    print(stats.pearsonr(practice_high_expert['pretest_score'], practice_high_expert['ere_post_test']))
+df_results, df_correlations = t_test_expertise_reversal(llama_result)
+df_results.to_csv("../data/results/t_test_results.csv", index=False)
+df_correlations.to_csv("../data/results/pearson_correlations.csv", index=False)
