@@ -70,8 +70,8 @@ def t_test_expertise_reversal(df, alpha=0.05):
     return t_test_df, pearson_df  # Returning DataFrames for further use
 
 # llm experiments results
-gemma_result = pd.read_csv("/Users/ctivir/projects/ml/ed_simulator/unchk/gemma2_9b_it_output.csv", delimiter=',')
-llama_result = pd.read_csv("/Users/ctivir/projects/ml/ed_simulator/unchk/llama3_8b_8192_40_output.csv", delimiter=',')
+gemma_result = pd.read_csv("../data/results/gemma2_9b_it_output.csv", delimiter=',')
+llama_result = pd.read_csv("../data/results/llama3_8b_8192_40_output.csv", delimiter=',')
 
 df_results, df_correlations = t_test_expertise_reversal(llama_result)
 df_results.to_csv("../data/results/t_test_results.csv", index=False)
