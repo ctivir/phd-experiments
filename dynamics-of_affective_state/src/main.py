@@ -11,7 +11,7 @@ dotenv_path = os.path.abspath("../../.env")
 load_dotenv(dotenv_path=dotenv_path)
 
 # Retrieve the API key
-API_KEY = os.getenv("GROQ_API1")
+API_KEY = os.getenv("GROQ_API")
 
 # Check if the API key is loaded
 if not API_KEY:
@@ -112,12 +112,12 @@ Choose one from the following options: {states}
 experiment2_1 = ExperimentRunner(
     DATA3, MODEL, CLIENT, PROMPT_21, STATES, "experiment_2_model1_5x", model_1=True
 )
-experiment2_1.run_experiment(2) # not
+# experiment2_1.run_experiment(2) # succeeded
 
 experiment2_2 = ExperimentRunner(
-    DATA3[:1], MODEL, CLIENT, PROMPT_22, STATES, "experiment_2_model2_2x", model_1=False
+    DATA3, MODEL, CLIENT, PROMPT_22, STATES, "experiment_2_model2_2x", model_1=False
 )
-# experiment2_1.run_experiment()
+# experiment2_2.run_experiment(2)
 
 ####################################################################################################
 ##
@@ -163,11 +163,11 @@ Choose one from the following options: {states}
 
 # Run experiment 3
 experiment3_1 = ExperimentRunner(
-    DATA3, MODEL, CLIENT, PROMPT_31, STATES, "experiment_3_model1", model_1=True
+    DATA3, MODEL, CLIENT, PROMPT_31, STATES, "experiment_3_model1_2x", model_1=True
 )
-# experiment3_1.run_experiment(5) # 
+# experiment3_1.run_experiment(2) # succeeded
 
 experiment3_2 = ExperimentRunner(
-    DATA3, MODEL, CLIENT, PROMPT_32, STATES, "experiment_3_model2", model_1=False
+    DATA3, MODEL, CLIENT, PROMPT_32, STATES, "experiment_3_model2_2x", model_1=False
 )
-# experiment3_2.run_experiment()
+experiment3_2.run_experiment(2)
