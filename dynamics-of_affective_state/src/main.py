@@ -117,7 +117,7 @@ experiment2_1 = ExperimentRunner(
 experiment2_2 = ExperimentRunner(
     DATA3, MODEL, CLIENT, PROMPT_22, STATES, "experiment_2_model2_2x", model_1=False
 )
-# experiment2_2.run_experiment(2)
+experiment2_2.run_experiment(2)
 
 ####################################################################################################
 ##
@@ -170,4 +170,4 @@ experiment3_1 = ExperimentRunner(
 experiment3_2 = ExperimentRunner(
     DATA3, MODEL, CLIENT, PROMPT_32, STATES, "experiment_3_model2_2x", model_1=False
 )
-experiment3_2.run_experiment(2)
+# experiment3_2.run_experiment(2)
