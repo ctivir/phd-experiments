@@ -91,11 +91,11 @@ class PersonaManager:
         if num is None:
             raise ValueError("The 'num' parameter is required for expertise reversal.")
         print(num)
-        
+
         personas = personas.sample(frac=1, random_state=42).reset_index(
             drop=True
         )  # Shuffle personas
-        
+
         # Assign variability conditions
         variability_conditions = [
             "low-variability/practice",
@@ -106,9 +106,9 @@ class PersonaManager:
         personas["variability"] = [
             variability_conditions[i % 4] for i in range(len(personas))
         ]
-        
+
         print(personas.head())
-        
+
         low_condition = ["low-expertise/practice", "low-expertise/worked-example"]
         high_condition = ["high-expertise/practice", "high-expertise/worked-example"]
 
@@ -141,33 +141,33 @@ class PersonaManager:
         return assigned_personas.sample(frac=1, random_state=42).reset_index(drop=True)
 
     def save_personas_to_csv(self, personas, file_name=None):
-            """
-            Saves the personas DataFrame to a CSV file.
+        """
+        Saves the personas DataFrame to a CSV file.
 
-            Args:
-                personas (DataFrame or list): The persona data to be saved.
-                file_name (str, optional): Custom file name for the CSV.
+        Args:
+            personas (DataFrame or list): The persona data to be saved.
+            file_name (str, optional): Custom file name for the CSV.
 
-            Returns:
-                str: Path to the saved CSV file.
-            """
-            if not isinstance(personas, pd.DataFrame):
-                personas = pd.DataFrame(personas)
+        Returns:
+            str: Path to the saved CSV file.
+        """
+        if not isinstance(personas, pd.DataFrame):
+            personas = pd.DataFrame(personas)
 
-            # Define file path
-            file_name = file_name or self.file_name
-            file_path = os.path.join(self.out_dir, file_name)
+        # Define file path
+        file_name = file_name or self.file_name
+        file_path = os.path.join(self.out_dir, file_name)
 
-            # Save to CSV
-            try:
-                personas.to_csv(file_path, index=False)
-                print(f"Personas saved successfully to {file_path}")
-                return file_path
-            except Exception as e:
-                print(f"Error saving personas to CSV: {e}")
-                return None
-        
-        
+        # Save to CSV
+        try:
+            personas.to_csv(file_path, index=False)
+            print(f"Personas saved successfully to {file_path}")
+            return file_path
+        except Exception as e:
+            print(f"Error saving personas to CSV: {e}")
+            return None
+
+
 # Usage
 URL = "https://raw.githubusercontent.com/joyheyueya/declarative-math-word-problem/refs/heads/main/algebra222.csv"
 

@@ -39,7 +39,7 @@ class ExperimentRunner:
                 ],
                 model=self.model,  # The language model which will generate the completion.
                 temperature=0,  # Controls randomness: lowering results in less random completions.
-                max_tokens=512,  # The maximum number of tokens to generate.
+                max_tokens=256,  # The maximum number of tokens to generate.
                 top_p=1,  # Controls diversity via nucleus sampling.
                 stop=None,
                 stream=False,  # If set, partial message deltas will be sent
@@ -149,13 +149,7 @@ class ExperimentRunner:
                             if not previous_state
                             else previous_state
                         )
-                        # Add to transcript_pairs only if model_1 is not used
-                        # if self.model_1 is False:
-                        #     transcript_pairs.append(
-                        #         {"student": student_response, "tutor": tutor_response}
-                        #     )
                         
-                        print(f"{'@'*70}\n{transcript_pairs}\n{'@'*70}")
                         # Generate prompt
                         prompt = self._generate_prompt(
                             math_level,

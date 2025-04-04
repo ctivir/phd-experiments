@@ -21,7 +21,8 @@ CLIENT = Groq(api_key=API_KEY)
 
 MODEL = "llama3-8b-8192"
 DATA = pd.read_json(f"{DATA_DIR}/CoMTA_dataset.json")
-DATA3 = pd.read_json(f"{DATA_DIR}/CoMTA_dataset3.json")
+DATA1 = pd.read_json(f"{DATA_DIR}/CoMTA_dataset3.json")
+DATA2 = pd.read_json(f"{DATA_DIR}/CoMTA_dataset_tutor_non_positive.json")
 STATES = [
     "boredom",
     "engagement",
@@ -64,20 +65,20 @@ Choose only one from the following options: {states}
 - Reasoning: Briefly explain why this emotional state is the most likely.
 """
 
-# Run experiment 1
-experiment1_1 = ExperimentRunner(
-    DATA, MODEL, CLIENT, PROMPT_11, STATES, "experiment_1_model1", model_1=True
-)
+# Run experiment 1 without adding math skills and anxiety levels
+# experiment1_1 = ExperimentRunner(
+#     DATA, MODEL, CLIENT, PROMPT_11, STATES, "experiment_1_model1", model_1=True
+# )
 # experiment1_1.run_experiment() # replaced by experiment 2
 
-experiment1_2 = ExperimentRunner(
-    DATA, MODEL, CLIENT, PROMPT_12, STATES, "experiment_1_model2", model_1=False
-)
+# experiment1_2 = ExperimentRunner(
+#     DATA, MODEL, CLIENT, PROMPT_12, STATES, "experiment_1_model2", model_1=False
+# )
 # experiment1_2.run_experiment()  # replaced by experiment 2
 
 ##############################################################################################
 ##
-# Experiment 2
+# Experiment 2 with math skills and anxiety levels
 ##
 ##############################################################################################
 
@@ -110,14 +111,14 @@ Choose one from the following options: {states}
 """
 
 experiment2_1 = ExperimentRunner(
-    DATA3, MODEL, CLIENT, PROMPT_21, STATES, "experiment_2_model1_5x", model_1=True
+    DATA1, MODEL, CLIENT, PROMPT_21, STATES, "experiment_2_model1_5x", model_1=True
 )
 # experiment2_1.run_experiment(2) # succeeded
 
 experiment2_2 = ExperimentRunner(
-    DATA3, MODEL, CLIENT, PROMPT_22, STATES, "experiment_2_model2_2x", model_1=False
+    DATA2, MODEL, CLIENT, PROMPT_22, STATES, "experiment_2_model2", model_1=False
 )
-experiment2_2.run_experiment(2)
+experiment2_2.run_experiment(1) # succeeded
 
 ####################################################################################################
 ##
@@ -163,11 +164,27 @@ Choose one from the following options: {states}
 
 # Run experiment 3
 experiment3_1 = ExperimentRunner(
-    DATA3, MODEL, CLIENT, PROMPT_31, STATES, "experiment_3_model1_2x", model_1=True
+    DATA1, MODEL, CLIENT, PROMPT_31, STATES, "experiment_3_model1_2x", model_1=True
 )
 # experiment3_1.run_experiment(2) # succeeded
 
 experiment3_2 = ExperimentRunner(
-    DATA3, MODEL, CLIENT, PROMPT_32, STATES, "experiment_3_model2_2x", model_1=False
+    DATA1, MODEL, CLIENT, PROMPT_32, STATES, "experiment_3_model2_2x", model_1=False
 )
 # experiment3_2.run_experiment(2)
+
+
+####################################################################################################
+##
+# Experiment 4 trying neutral response from the tutor 
+##
+####################################################################################################
+experiment4_1 = ExperimentRunner(
+    DATA2, MODEL, CLIENT, PROMPT_21, STATES, "experiment_4_model1_2x", model_1=True
+)
+# experiment4_1.run_experiment(2) # succeeded
+
+experiment4_2 = ExperimentRunner(
+    DATA2, MODEL, CLIENT, PROMPT_22, STATES, "experiment_4_model2_2x", model_1=False
+)
+# experiment4_2.run_experiment(2) # 

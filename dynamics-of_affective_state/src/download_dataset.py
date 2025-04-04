@@ -14,6 +14,10 @@ os.makedirs(OUT_DIR, exist_ok=True)
 def download_file(url, file_path):
     """
     Downloads a file from a given URL if it is not already present.
+
+    Args:
+        url (str):
+        file_path (str):
     """
     if not os.path.exists(file_path):
         try:
@@ -30,8 +34,12 @@ def download_file(url, file_path):
         print(f"File already exists: {file_path}")
 
 
-def read_json(file_path: str):
-    """Reads and parses a JSON file."""
+def read_json(file_path):
+    """Reads and parses a JSON file.
+
+    Args:
+        file_path (str):
+    """
     try:
         with open(file_path, "r", encoding="utf-8") as file:
             data = json.load(file)  # Parse JSON data
@@ -48,13 +56,13 @@ def read_json(file_path: str):
 
 
 # Define the full file path
-file_path = os.path.join(OUT_DIR, FILE_NAME)
+FILE_PATH = os.path.join(OUT_DIR, FILE_NAME)
 
 # Download the file if it doesn't exist
-download_file(URL, file_path)
+download_file(URL, FILE_PATH)
 
 # Read and parse the JSON file
-json_data = read_json(file_path)
+json_data = read_json(FILE_PATH)
 
 # Print the JSON content (formatted)
 if json_data:
